@@ -10,22 +10,8 @@ import { deleteMap } from "../../api";
 
 
 export function ToolbarItemCloudLoad(props) {
-  const [curMap, setCurMap] = useGlobal("curMap")
-  const { diagram } = props;
-  const diagramProps = diagram.getDiagramProps();
-  const { controller } = diagramProps;
-  const loadMap = (map) => {
-
-    let obj = JSON.parse(map.mapData);
-    let model = controller.run("deserializeModel", { controller, obj });
-    diagram.openNewModel(model);
-    setCurMap(map._id)
-    controller.run("setUndoStack", { undoStack: new Stack() })
-    controller.run("setRedoStack", { redoStack: new Stack() })
-  }
-
   const itemRenderer = (map, modifiers) => {
-    const isSelected = map._id === curMap
+    const isSelected = map._id === props.curMap
     return (
       <MenuItem icon={isSelected ? "selection" : "circle"} key={map.name} onClick={modifiers.handleClick} text={map.name} intent={isSelected ? "success" : "none"}>
         <MenuItem disabled={isSelected} key={`${map.name}-rename`} onClick={() => {
@@ -46,7 +32,7 @@ export function ToolbarItemCloudLoad(props) {
   }
   return (
     <div className={cx("bm-toolbar-item")}>
-      <Select itemRenderer={itemRenderer} items={props.existingMaps.status === "success" ? props.existingMaps.data.data : []} onItemSelect={loadMap} filterable={false} >
+      <Select itemRenderer={itemRenderer} items={props.existingMaps.status === "success" ? props.existingMaps.data.data : []} onItemSelect={props.handleLoad} filterable={false} >
         <Button icon="cloud-download" minimal large />
       </Select>
     </div>

@@ -40,7 +40,6 @@ export const Toolbar = (props) => {
       queryCache.invalidateQueries("mindmaps")
       controller.run("setUndoStack", { undoStack: new Stack() })
       controller.run("setRedoStack", { redoStack: new Stack() })
-      setCurMap(resp.data._id)
     }
   })
 
@@ -57,6 +56,16 @@ export const Toolbar = (props) => {
   const handleDuplicate = (mapName) => {
     console.log(`Duplicated ${selectedMap.name} (${selectedMap._id}) to ${mapName}`)
     duplicateMapMutation({ owner: "benji", name: mapName, mapData: selectedMap.mapData })
+  }
+
+
+  const handleLoad = (map) => {
+    let obj = JSON.parse(map.mapData);
+    let model = controller.run("deserializeModel", { controller, obj });
+    diagram.openNewModel(model);
+    setCurMap(map._id)
+    controller.run("setUndoStack", { undoStack: new Stack() })
+    controller.run("setRedoStack", { redoStack: new Stack() })
   }
 
   return (
@@ -114,8 +123,16 @@ export const Toolbar = (props) => {
         onClick={onClickRedo}
       />
       <ToolbarItemCloudSave existingMaps={existingMaps} {...props} />
-      <ToolbarItemCloudLoad existingMaps={existingMaps} setDeleteVisibility={setDeleteVisibility} setDuplicateVisibility={setDuplicateVisibility} setRenameVisibility={setRenameVisibility} setSelectedMap={setSelectedMap} {...props} />
-      <span className="bm-toolbar-title">{curMap ? existingMaps.status === "success" && existingMaps.data.data.filter(x => x._id === curMap)[0].name : "Untitled Map"}</span>
+      <ToolbarItemCloudLoad
+        curMap={curMap}
+        existingMaps={existingMaps}
+        setDeleteVisibility={setDeleteVisibility}
+        setDuplicateVisibility={setDuplicateVisibility}
+        setRenameVisibility={setRenameVisibility}
+        setSelectedMap={setSelectedMap}
+        handleLoad={handleLoad}
+        {...props} />
+      <span className="bm-toolbar-title">{curMap ? existingMaps.status === "success" && existingMaps.data?.data?.filter(x => x._id === curMap)[0]?.name : "Untitled Map"}</span>
     </div>
   );
 }
