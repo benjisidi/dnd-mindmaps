@@ -1,29 +1,31 @@
+import { Button, MenuItem } from "@blueprintjs/core";
+import { Select } from "@blueprintjs/select";
 import cx from "classnames";
-import { iconClassName } from "@blink-mind/renderer-react";
-import { Menu, MenuDivider, MenuItem, Popover, Icon, Button, Dialog } from "@blueprintjs/core";
 import React, { useState } from "react";
-import { Select } from "@blueprintjs/select"
-import { updateMap, createNewMap, getAllMaps } from "../../api"
-import { useGlobal } from "reactn"
-import { useMutation, useQuery, queryCache } from "react-query"
-import { SaveAsDialog } from "../save-as/save-as"
-import { useForm } from "react-hook-form"
+import { useForm } from "react-hook-form";
+import { queryCache, useMutation } from "react-query";
+import { useGlobal } from "reactn";
+import { createNewMap, updateMap } from "../../api";
+import { NameDialog } from "../dialogs/name";
 
 export function ToolbarItemCloudSave(props) {
   const { register, handleSubmit, watch, errors } = useForm();
   const [updateMapMutation, { updateStatus, updateData, updateError }] = useMutation(updateMap, { onSuccess: () => queryCache.invalidateQueries("mindmaps") })
-  const [createMapMutation, { createStatus, createData, createError }] = useMutation(createNewMap, { onSuccess: () => queryCache.invalidateQueries("mindmaps") })
+  const [createMapMutation, { createStatus, createData, createError }] = useMutation(createNewMap, {
+    onSuccess: (resp) => {
+      queryCache.invalidateQueries("mindmaps")
+      setCurmap(resp.data._id)
+    }
+  })
   const [curMap, setCurmap] = useGlobal("curMap")
   const [saveAsDialog, setSaveAsDialog] = useState(false)
   const closeSaveDialog = () => setSaveAsDialog(false)
-  console.log(curMap)
   const getMapAsJSON = e => {
     const { diagram } = props;
     const diagramProps = diagram.getDiagramProps();
     const { controller, model } = diagramProps;
     const json = controller.run("serializeModel", diagramProps);
     const jsonStr = JSON.stringify(json)
-    console.log(jsonStr)
     return jsonStr
     // const url = `data:text/plain,${encodeURIComponent(jsonStr)}`;
     // const title = controller.run("getTopicTitle", {
@@ -40,10 +42,7 @@ export function ToolbarItemCloudSave(props) {
   }
   const saveAs = (name) => {
     const mapData = getMapAsJSON()
-    createMapMutation({ name, mapData, owner: "benji" }).then(resp => {
-      setCurmap(resp.data._id)
-    })
-
+    createMapMutation({ name, mapData, owner: "benji" })
   }
 
   return (
@@ -51,15 +50,15 @@ export function ToolbarItemCloudSave(props) {
       <Select itemRenderer={itemRenderer} items={[{ name: "Save", disabled: !curMap, onClick: save }, { name: "Save As", disabled: false, onClick: () => setSaveAsDialog(true) }]} filterable={false} >
         <Button icon="cloud-upload" minimal large />
       </Select>
-      <SaveAsDialog
+      <NameDialog
+        title="Save Map"
         isOpen={saveAsDialog}
         onClose={closeSaveDialog}
         onSubmit={handleSubmit((formData) => {
-          console.log("Submitted.")
-          console.log(formData)
           saveAs(formData.mapName)
           closeSaveDialog()
         })}
+        inputName="mapName"
         register={register}
         errors={errors}
         existing={props.existingMaps.status === "success" ? props.existingMaps.data.data.map(x => x.name) : []}

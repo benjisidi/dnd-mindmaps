@@ -5,14 +5,11 @@ const mongoose = require("mongoose")
 const mindmaps = require("./routes/api/mindmaps")
 
 const main = async () => {
-  // Body Parser
   const app = express()
   app.use(express.json())
 
-  // DB config
   const db = require("./config/keys").mongoURI
 
-  // Connect to mongo
   try {
     await mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
     console.log("MongoDB Connected...")
@@ -20,7 +17,6 @@ const main = async () => {
     console.log(e)
   }
 
-  // Use routes
   app.use("/api/mindmaps", mindmaps)
 
   if (process.env.NODE_ENV === "production") {

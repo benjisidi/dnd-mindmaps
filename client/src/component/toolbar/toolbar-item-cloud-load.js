@@ -1,14 +1,13 @@
+import { Button, MenuItem } from "@blueprintjs/core";
+import { Select } from "@blueprintjs/select";
 import cx from "classnames";
-import { iconClassName } from "@blink-mind/renderer-react";
-import { Menu, MenuDivider, MenuItem, Popover, Icon, Button } from "@blueprintjs/core";
-import { Select } from "@blueprintjs/select"
+import { Stack } from "immutable";
 import React from "react";
-import { downloadFile } from "../../utils";
-import { Stack } from "immutable"
-import { useGlobal, getGlobal } from "reactn"
-import { deleteMap } from "../../api"
+import { useForm } from "react-hook-form";
+import { queryCache, useMutation } from "react-query";
+import { useGlobal } from "reactn";
+import { deleteMap } from "../../api";
 
-import { useQuery, queryCache, useMutation } from "react-query"
 
 export function ToolbarItemCloudLoad(props) {
   const [curMap, setCurMap] = useGlobal("curMap")
@@ -17,6 +16,7 @@ export function ToolbarItemCloudLoad(props) {
   const { controller } = diagramProps;
   const [deleteMapMutation, { deleteStatus, deleteData, deleteError }] = useMutation(deleteMap, { onSuccess: () => queryCache.invalidateQueries("mindmaps") })
   const loadMap = (map) => {
+
     let obj = JSON.parse(map.mapData);
     let model = controller.run("deserializeModel", { controller, obj });
     diagram.openNewModel(model);
@@ -30,9 +30,19 @@ export function ToolbarItemCloudLoad(props) {
     controller.run("setRedoStack", { redoStack: new Stack() })
   }
   const itemRenderer = (map, modifiers) => {
+    const isSelected = map._id === curMap
     return (
-      <MenuItem key={map.name} onClick={modifiers.handleClick} text={map.name} intent={map._id === curMap ? "success" : "none"}>
-        <MenuItem disabled={map._id === curMap} key={`${map.name}-delete`} onClick={() => handleDeleteMap(map)} text="Delete" intent="danger" />
+      <MenuItem icon={isSelected ? "selection" : "circle"} key={map.name} onClick={modifiers.handleClick} text={map.name} intent={isSelected ? "success" : "none"}>
+        <MenuItem disabled={isSelected} key={`${map.name}-rename`} onClick={() => {
+          props.setSelectedMap(map)
+          props.setRenameVisibility(true)
+        }}
+          icon="edit" text="Rename" />
+        <MenuItem key={`${map.name}-duplicate`} onClick={() => {
+          props.setSelectedMap(map)
+          props.setDuplicateVisibility(true)
+        }} icon="duplicate" text="Duplicate" />
+        <MenuItem disabled={isSelected} key={`${map.name}-delete`} onClick={() => handleDeleteMap(map)} text="Delete" icon="remove" intent="danger" />
       </MenuItem>
     )
   }
