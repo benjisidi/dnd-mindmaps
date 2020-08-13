@@ -1,22 +1,23 @@
-import { Classes, Dialog, ControlGroup, Button } from "@blueprintjs/core";
-import React from "react"
-const SaveAsDialog = (props) => {
+import { Button, Classes, Dialog } from "@blueprintjs/core";
+import React from "react";
+const NameDialog = (props) => {
   return (
     <Dialog
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title="Save Map"
+      title={props.title}
       canOutsideClickClose={false}
     >
       <form onSubmit={props.onSubmit}>
         <div className={Classes.DIALOG_BODY}>
-          {props.errors.mapName && <span>{props.errors.mapName.type === "unique" ? "That name is taken." : "Please enter a name."}</span>}
+          {props.errors[props.inputName] && <span>{props.errors[props.inputName].type === "unique" ? "That name is taken." : "Please enter a name."}</span>}
           <input
             className={`${Classes.INPUT} ${Classes.LARGE}  ${
               props.errors.user && Classes.INTENT_DANGER
               } ${Classes.FILL}`}
-            name="mapName"
-            placeholder="Enter map name"
+            name={props.inputName}
+            defaultValue={props.defaultValue}
+            placeholder="Enter a name"
             ref={props.register({ required: true, validate: { unique: (name) => !props.existing.includes(name) } })}
           />
         </div>
@@ -32,4 +33,4 @@ const SaveAsDialog = (props) => {
     </Dialog>
   )
 };
-export { SaveAsDialog };
+export { NameDialog };

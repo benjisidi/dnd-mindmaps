@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { queryCache, useMutation } from "react-query";
 import { useGlobal } from "reactn";
 import { createNewMap, updateMap } from "../../api";
-import { NameDialog } from "../dialogs/name";
+import { NameDialog } from "../overlays/rename-dialog";
 
 export function ToolbarItemCloudSave(props) {
   const { register, handleSubmit, watch, errors } = useForm();

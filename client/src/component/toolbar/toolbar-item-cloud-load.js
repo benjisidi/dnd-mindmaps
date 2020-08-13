@@ -14,7 +14,6 @@ export function ToolbarItemCloudLoad(props) {
   const { diagram } = props;
   const diagramProps = diagram.getDiagramProps();
   const { controller } = diagramProps;
-  const [deleteMapMutation, { deleteStatus, deleteData, deleteError }] = useMutation(deleteMap, { onSuccess: () => queryCache.invalidateQueries("mindmaps") })
   const loadMap = (map) => {
 
     let obj = JSON.parse(map.mapData);
@@ -24,11 +23,7 @@ export function ToolbarItemCloudLoad(props) {
     controller.run("setUndoStack", { undoStack: new Stack() })
     controller.run("setRedoStack", { redoStack: new Stack() })
   }
-  const handleDeleteMap = (map) => {
-    deleteMapMutation(map._id)
-    controller.run("setUndoStack", { undoStack: new Stack() })
-    controller.run("setRedoStack", { redoStack: new Stack() })
-  }
+
   const itemRenderer = (map, modifiers) => {
     const isSelected = map._id === curMap
     return (
@@ -42,7 +37,10 @@ export function ToolbarItemCloudLoad(props) {
           props.setSelectedMap(map)
           props.setDuplicateVisibility(true)
         }} icon="duplicate" text="Duplicate" />
-        <MenuItem disabled={isSelected} key={`${map.name}-delete`} onClick={() => handleDeleteMap(map)} text="Delete" icon="remove" intent="danger" />
+        <MenuItem disabled={isSelected} key={`${map.name}-delete`} onClick={() => {
+          props.setSelectedMap(map)
+          props.setDeleteVisibility(true)
+        }} text="Delete" icon="remove" intent="danger" />
       </MenuItem>
     )
   }
