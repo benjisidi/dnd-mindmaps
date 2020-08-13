@@ -37,9 +37,7 @@ router.post('/:id', async (req, res) => {
   let result
   try {
     const mindmap = await Mindmap.findById(req.params.id)
-    console.log(mindmap)
     Object.assign(mindmap, req.body)
-    console.log(mindmap)
     result = await mindmap.save()
   } catch (e) {
     res.status(400).json({ success: false, msg: e })

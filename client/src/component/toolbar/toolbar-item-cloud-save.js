@@ -40,7 +40,10 @@ export function ToolbarItemCloudSave(props) {
   }
   const saveAs = (name) => {
     const mapData = getMapAsJSON()
-    createMapMutation({ name, mapData, owner: "benji" })
+    createMapMutation({ name, mapData, owner: "benji" }).then(resp => {
+      setCurmap(resp.data._id)
+    })
+
   }
 
   return (

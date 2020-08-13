@@ -2,7 +2,6 @@
   "name": "react-mindmap",
   "version": "0.1.14",
   "license": "MIT",
-  "homepage": "https://awehook.github.io/react-mindmap/",
   "proxy": "http://localhost:5000",
   "dependencies": {
     "@blink-mind/core": "0.0.20-beta.6",
