@@ -3,12 +3,12 @@ const path = require("path")
 const mongoose = require("mongoose")
 
 const mindmaps = require("./routes/api/mindmaps")
+require("dotenv").config()
 
 const main = async () => {
   const app = express()
   app.use(express.json())
-
-  const db = require("./config/keys").mongoURI
+  const db = process.env.mongoURI
 
   try {
     await mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
