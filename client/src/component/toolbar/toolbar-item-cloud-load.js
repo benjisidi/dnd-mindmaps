@@ -4,7 +4,7 @@ import { Menu, MenuDivider, MenuItem, Popover, Icon, Button } from "@blueprintjs
 import { Select } from "@blueprintjs/select"
 import React from "react";
 import { downloadFile } from "../../utils";
-
+import { Stack } from "immutable"
 import { useGlobal, getGlobal } from "reactn"
 
 import { useQuery, queryCache } from "react-query"
@@ -19,8 +19,8 @@ export function ToolbarItemCloudLoad(props) {
     let model = controller.run("deserializeModel", { controller, obj });
     diagram.openNewModel(model);
     setCurMap(map._id)
-    console.log("Set curmap. New state:")
-    console.log(getGlobal())
+    controller.run("setUndoStack", { undoStack: new Stack() })
+    controller.run("setRedoStack", { redoStack: new Stack() })
   }
   return (
     <div className={cx("bm-toolbar-item")}>
