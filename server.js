@@ -8,7 +8,7 @@ require("dotenv").config()
 const main = async () => {
   const app = express()
   app.use(express.json())
-  const db = process.env.mongoURI
+  const db = process.env.dnd_mindmaps_mongo_uri
 
   try {
     await mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
