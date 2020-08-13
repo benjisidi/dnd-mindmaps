@@ -1,0 +1,115 @@
+{
+  "rootTopicKey": "da328fee-a7b2-4f89-a60e-44884f03cfcc",
+  "editorRootTopicKey": "da328fee-a7b2-4f89-a60e-44884f03cfcc",
+  "focusKey": "da328fee-a7b2-4f89-a60e-44884f03cfcc",
+  "extData": {},
+  "topics": [
+    {
+      "key": "da328fee-a7b2-4f89-a60e-44884f03cfcc",
+      "parentKey": null,
+      "subKeys": [
+        "47798126-5f89-495b-b74a-96c247f34f1d",
+        "d554298c-6476-44b0-b6de-3d5981087e96",
+        "92a10626-812c-423f-8377-1b6d26578221"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [{ "type": "CONTENT", "data": "Main Topic" }]
+    },
+    {
+      "key": "47798126-5f89-495b-b74a-96c247f34f1d",
+      "parentKey": "da328fee-a7b2-4f89-a60e-44884f03cfcc",
+      "subKeys": ["a63ab431-1d1e-49fc-90e9-3311322fbec1"],
+      "collapse": false,
+      "style": null,
+      "blocks": [{ "type": "CONTENT", "data": "a1" }]
+    },
+    {
+      "key": "a63ab431-1d1e-49fc-90e9-3311322fbec1",
+      "parentKey": "47798126-5f89-495b-b74a-96c247f34f1d",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [{ "type": "CONTENT", "data": "b1" }]
+    },
+    {
+      "key": "d554298c-6476-44b0-b6de-3d5981087e96",
+      "parentKey": "da328fee-a7b2-4f89-a60e-44884f03cfcc",
+      "subKeys": ["5b855914-081a-4279-afe9-dfae05054e07"],
+      "collapse": false,
+      "style": null,
+      "blocks": [{ "type": "CONTENT", "data": "a2" }]
+    },
+    {
+      "key": "5b855914-081a-4279-afe9-dfae05054e07",
+      "parentKey": "d554298c-6476-44b0-b6de-3d5981087e96",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [{ "type": "CONTENT", "data": "b2" }]
+    },
+    {
+      "key": "92a10626-812c-423f-8377-1b6d26578221",
+      "parentKey": "da328fee-a7b2-4f89-a60e-44884f03cfcc",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [{ "type": "CONTENT", "data": "\ra3" }]
+    }
+  ],
+  "config": {
+    "readOnly": false,
+    "allowUndo": true,
+    "layoutDir": 2,
+    "theme": {
+      "name": "default",
+      "randomColor": true,
+      "background": "rgb(57,60,65)",
+      "highlightColor": "#50C9CE",
+      "marginH": 60,
+      "marginV": 20,
+      "contentStyle": { "lineHeight": "1.5" },
+      "linkStyle": { "lineRadius": 5, "lineType": "curve", "lineWidth": "3px" },
+      "rootTopic": {
+        "contentStyle": {
+          "fontSize": "34px",
+          "borderRadius": "35px",
+          "padding": "16px 18px 16px 18px"
+        },
+        "subLinkStyle": {
+          "lineType": "curve",
+          "lineWidth": "3px",
+          "lineColor": "rgb(113, 203, 45)"
+        }
+      },
+      "primaryTopic": {
+        "contentStyle": {
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderRadius": "20px",
+          "fontSize": "17px",
+          "padding": "10px 15px 10px 15px"
+        },
+        "subLinkStyle": {
+          "lineType": "curve",
+          "lineWidth": "3px",
+          "lineColor": "rgb(113, 203, 45)"
+        }
+      },
+      "normalTopic": {
+        "contentStyle": {
+          "border": "1px solid #e8eaec",
+          "borderRadius": "20px",
+          "fontSize": "17px",
+          "padding": "4px 10px"
+        },
+        "subLinkStyle": {
+          "lineType": "curve",
+          "lineWidth": "3px",
+          "lineColor": "white"
+        }
+      }
+    }
+  },
+  "formatVersion": null
+}

@@ -1,0 +1,21 @@
+{
+  "name": "dnd-mindmaps",
+  "version": "1.0.0",
+  "description": "A simple hosted version of react-mindmap for creating dnd mindmaps",
+  "main": "server.js",
+  "repository": "none",
+  "author": "Benji Sidi <benjisidi@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "dev:server": "nodemon server.js"
+  },
+  "dependencies": {
+    "concurrently": "^5.3.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.28"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
