@@ -1,6 +1,6 @@
 import { iconClassName } from "@blink-mind/renderer-react";
 import cx from "classnames";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { queryCache, useMutation, useQuery } from "react-query";
 import { useGlobal } from "reactn";
@@ -16,6 +16,7 @@ import { ToolbarItemSearch } from "./toolbar-item-search";
 import { ToolbarItemTheme } from "./toolbar-item-theme";
 import "./Toolbar.css";
 import { Stack } from "immutable";
+import { Toaster } from "@blueprintjs/core"
 
 import { deepCompareKeys } from "@blueprintjs/core/lib/esm/common/utils";
 // import debug from "debug";
@@ -33,15 +34,39 @@ export const Toolbar = (props) => {
   const [deleteVisibility, setDeleteVisibility] = useState(false)
   const [duplicateVisibility, setDuplicateVisibility] = useState(false)
 
-  const [deleteMapMutation, { deleteStatus, deleteData, deleteError }] = useMutation(deleteMap, { onSuccess: () => queryCache.invalidateQueries("mindmaps") })
-  const [renameMapMutation, { renameStatus, renameData, renameError }] = useMutation(updateMap, { onSuccess: () => queryCache.invalidateQueries("mindmaps") })
+  const [deleteMapMutation, { deleteStatus, deleteData, deleteError }] = useMutation(deleteMap, {
+    onSuccess: () => {
+      queryCache.invalidateQueries("mindmaps")
+      NotificationToaster.current.show({ message: `Successfully deleted ${selectedMap.name}`, intent: "success" })
+    },
+    onError: () => {
+      NotificationToaster.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
+    }
+  })
+  const [renameMapMutation, { renameStatus, renameData, renameError }] = useMutation(updateMap, {
+    onSuccess: (resp) => {
+      queryCache.invalidateQueries("mindmaps")
+      NotificationToaster.current.show({ message: `Successfully renamed ${selectedMap.name} -> ${resp.data.name}`, intent: "success" })
+    },
+    onError: () => {
+      NotificationToaster.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
+    }
+  })
   const [duplicateMapMutation, { duplicateStatus, duplicateData, duplicateError }] = useMutation(createNewMap, {
     onSuccess: (resp) => {
       queryCache.invalidateQueries("mindmaps")
       controller.run("setUndoStack", { undoStack: new Stack() })
       controller.run("setRedoStack", { redoStack: new Stack() })
+      console.log(resp)
+      NotificationToaster.current.show({ message: `Successfully duplicated ${selectedMap.name} -> ${resp.data.name}`, intent: "success" })
+    },
+    onError: () => {
+      NotificationToaster.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
     }
   })
+
+  const NotificationToaster = useRef(null);
+
 
   const handleDelete = (map) => {
     deleteMapMutation(map._id)
@@ -70,6 +95,7 @@ export const Toolbar = (props) => {
 
   return (
     <div className="bm-toolbar">
+      <Toaster ref={NotificationToaster} />
       <DeletionAlert
         isOpen={deleteVisibility}
         targetName={selectedMap?.name}

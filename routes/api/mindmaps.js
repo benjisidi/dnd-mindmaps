@@ -56,7 +56,7 @@ router.delete('/:id', async (req, res) => {
   } catch (e) {
     res.status(404).json({ success: false, msg: e })
   }
-  res.json({ success: true, msg: `Deleted ${mindmap.name} with id ${mindmap.id}` })
+  res.json({ success: true, msg: `Deleted ${mindmap.name} with id ${mindmap.id}`, _id: mindmap._id })
 })
 
 module.exports = router

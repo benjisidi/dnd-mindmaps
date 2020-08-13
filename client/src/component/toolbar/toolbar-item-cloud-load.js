@@ -1,12 +1,7 @@
 import { Button, MenuItem } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 import cx from "classnames";
-import { Stack } from "immutable";
 import React from "react";
-import { useForm } from "react-hook-form";
-import { queryCache, useMutation } from "react-query";
-import { useGlobal } from "reactn";
-import { deleteMap } from "../../api";
 
 
 export function ToolbarItemCloudLoad(props) {
