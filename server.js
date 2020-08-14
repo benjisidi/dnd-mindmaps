@@ -3,6 +3,7 @@ const path = require("path")
 const mongoose = require("mongoose")
 
 const mindmaps = require("./routes/api/mindmaps")
+const users = require("./routes/api/users")
 require("dotenv").config()
 
 const main = async () => {
@@ -11,13 +12,14 @@ const main = async () => {
   const db = process.env.dnd_mindmaps_mongo_uri
 
   try {
-    await mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+    await mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
     console.log("MongoDB Connected...")
   } catch (e) {
     console.log(e)
   }
 
   app.use("/api/mindmaps", mindmaps)
+  app.use("/api/users", users)
 
   if (process.env.NODE_ENV === "production") {
     app.use(express.static('client/build'))
