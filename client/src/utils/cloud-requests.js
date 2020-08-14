@@ -100,7 +100,7 @@ const useCloud = (diagram) => {
 
   const handleDuplicate = (mapName, selectedMap) => {
     console.log(`Duplicated ${selectedMap.name} (${selectedMap._id}) to ${mapName}`)
-    duplicateMapMutation({ owner: "benji", name: mapName, mapData: selectedMap.mapData, selectedMap })
+    duplicateMapMutation({ owner: user.username, name: mapName, mapData: selectedMap.mapData, selectedMap })
   }
 
 

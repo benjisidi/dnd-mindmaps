@@ -8,7 +8,7 @@ export function ToolbarItemCloudLoad(props) {
   const [user] = useGlobal("user")
   const itemRenderer = (map, modifiers) => {
     const isSelected = map._id === props.curMap
-    const isOwner = map.owner === user.username
+    const isOwner = map.owner === user?.username
     return (
       <MenuItem icon={isSelected ? "selection" : "circle"} key={map.name} onClick={modifiers.handleClick} text={map.name} intent={isSelected ? "success" : "none"}>
         <MenuItem disabled={isSelected || !isOwner} key={`${map.name}-rename`} onClick={() => {
