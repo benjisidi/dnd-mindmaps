@@ -2,14 +2,16 @@ import { Button, MenuItem, Text } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 import cx from "classnames";
 import React from "react";
-
+import { useGlobal } from "reactn"
 
 export function ToolbarItemCloudLoad(props) {
+  const [user] = useGlobal("user")
   const itemRenderer = (map, modifiers) => {
     const isSelected = map._id === props.curMap
+    const isOwner = map.owner === user.username
     return (
       <MenuItem icon={isSelected ? "selection" : "circle"} key={map.name} onClick={modifiers.handleClick} text={map.name} intent={isSelected ? "success" : "none"}>
-        <MenuItem disabled={isSelected} key={`${map.name}-rename`} onClick={() => {
+        <MenuItem disabled={isSelected || !isOwner} key={`${map.name}-rename`} onClick={() => {
           props.setSelectedMap(map)
           props.setRenameVisibility(true)
         }}
@@ -18,11 +20,11 @@ export function ToolbarItemCloudLoad(props) {
           props.setSelectedMap(map)
           props.setDuplicateVisibility(true)
         }} icon="duplicate" text="Duplicate" />
-        <MenuItem key={`${map.name}-share`} onClick={() => {
+        <MenuItem key={`${map.name}-share`} disabled={!isOwner} onClick={() => {
           props.setSelectedMap(map)
           props.setShareVisibility(true)
         }} text="Share" icon="send-message" />
-        <MenuItem disabled={isSelected} key={`${map.name}-delete`} onClick={() => {
+        <MenuItem disabled={isSelected || !isOwner} key={`${map.name}-delete`} onClick={() => {
           props.setSelectedMap(map)
           props.setDeleteVisibility(true)
         }} text="Delete" icon="remove" intent="danger" />
