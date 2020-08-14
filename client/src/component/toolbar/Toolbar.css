@@ -1,6 +1,29 @@
 .bm-toolbar {
-  /*padding: 5px 0;*/
+  display: flex;
+  justify-content: space-between;
   box-shadow: rgb(170, 170, 170) 0 0 2px;
+}
+
+.bm-toolbar-left {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.bm-toolbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bm-toolbar-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 16px;
 }
 
 .bm-toolbar-item {
