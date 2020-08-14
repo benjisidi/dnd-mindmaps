@@ -7,7 +7,7 @@ import { useQuery } from "react-query";
 import { useGlobal } from "reactn";
 import { useCloud } from "../../utils";
 import { getAllMaps } from "../../utils/api";
-import { DeletionAlert, NameDialog, LoginDialog, CreateUserDialog } from "../overlays";
+import { DeletionAlert, NameDialog, LoginDialog, SignUpDialog, ShareDialog } from "../overlays";
 
 import {
   ToolbarItemCloudLoad,
@@ -34,8 +34,20 @@ export const Toolbar = (props) => {
   const [renameVisibility, setRenameVisibility] = useState(false)
   const [deleteVisibility, setDeleteVisibility] = useState(false)
   const [duplicateVisibility, setDuplicateVisibility] = useState(false)
+  const [shareVisibility, setShareVisibility] = useState(false)
 
-  const { handleDelete, handleRename, handleLoad, handleDuplicate, handleSave, handleCreate, NotificationToasterRef, authenticate } = useCloud(diagram)
+  const {
+    handleDelete,
+    handleRename,
+    handleLoad,
+    handleDuplicate,
+    handleSave,
+    handleCreateMap,
+    handleAuthenticate,
+    handleCreateUser,
+    handleShare,
+    NotificationToasterRef,
+  } = useCloud(diagram)
 
   return (
     <div className="bm-toolbar">
@@ -49,6 +61,12 @@ export const Toolbar = (props) => {
             handleDelete(selectedMap)
             setDeleteVisibility(false)
           }}
+        />
+        <ShareDialog
+          isOpen={shareVisibility}
+          onClose={() => setShareVisibility(false)}
+          handleShare={handleShare}
+          selectedMap={selectedMap}
         />
         <NameDialog
           title={`Rename ${selectedMap?.name}`}
@@ -79,14 +97,14 @@ export const Toolbar = (props) => {
           existing={existingMaps.status === "success" ? existingMaps.data.data.map(x => x.name) : []}
         />
         <LoginDialog
-          register={register}
-          errors={errors}
           isOpen={loginVisibility}
           onClose={() => setLoginVisibility(false)}
-          onSubmit={handleSubmit((formData) => {
-            authenticate(formData)
-            setLoginVisibility(false)
-          })}
+          handleAuthenticate={handleAuthenticate}
+        />
+        <SignUpDialog
+          isOpen={createUserVisibility}
+          onClose={() => setCreateUserVisibility(false)}
+          handleCreateUser={handleCreateUser}
         />
         <ToolbarItemOpen {...props} />
         <ToolbarItemExport {...props} />
@@ -109,7 +127,7 @@ export const Toolbar = (props) => {
         <ToolbarItemCloudSave
           existingMaps={existingMaps}
           handleSave={handleSave}
-          handleCreate={handleCreate}
+          handleCreate={handleCreateMap}
           {...props} />
         <ToolbarItemCloudLoad
           curMap={curMap}
@@ -117,6 +135,7 @@ export const Toolbar = (props) => {
           setDeleteVisibility={setDeleteVisibility}
           setDuplicateVisibility={setDuplicateVisibility}
           setRenameVisibility={setRenameVisibility}
+          setShareVisibility={setShareVisibility}
           setSelectedMap={setSelectedMap}
           handleLoad={handleLoad}
           {...props} />
@@ -126,7 +145,7 @@ export const Toolbar = (props) => {
       </div>
       <div className="bm-toolbar-right">
         <ToolbarItemProfile
-          handleCreateClick={() => setCreateUserVisibility(true)}
+          handleCreateUserClick={() => setCreateUserVisibility(true)}
           handleLoginClick={() => setLoginVisibility(true)}
           handleProfileClick={null}
         />

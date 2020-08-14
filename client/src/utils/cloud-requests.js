@@ -1,4 +1,4 @@
-import { createNewMap, getAllMaps, updateMap, deleteMap } from "./api"
+import { createNewMap, getAllMaps, updateMap, deleteMap, authenticate, createUser } from "./api"
 import { queryCache, useMutation, useQuery } from "react-query"
 import { Stack } from "immutable"
 import { useRef } from "react"
@@ -10,8 +10,10 @@ const useCloud = (diagram) => {
   const diagramProps = diagram.getDiagramProps();
   const { controller } = diagramProps;
   const [curMap, setCurMap] = useGlobal("curMap")
+  const [user, setUser] = useGlobal("user")
 
-  const [deleteMapMutation, { deleteStatus, deleteData, deleteError }] = useMutation(deleteMap, {
+
+  const [deleteMapMutation] = useMutation(deleteMap, {
     onSuccess: (_, selectedMap) => {
       queryCache.invalidateQueries("mindmaps")
       NotificationToasterRef.current.show({ message: `Successfully deleted ${selectedMap.name}`, intent: "success" })
@@ -20,7 +22,7 @@ const useCloud = (diagram) => {
       NotificationToasterRef.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
     }
   })
-  const [renameMapMutation, { renameStatus, renameData, renameError }] = useMutation(updateMap, {
+  const [renameMapMutation] = useMutation(updateMap, {
     onSuccess: (resp, { selectedMap }) => {
       queryCache.invalidateQueries("mindmaps")
       NotificationToasterRef.current.show({ message: `Successfully renamed ${selectedMap.name} -> ${resp.data.name}`, intent: "success" })
@@ -29,7 +31,16 @@ const useCloud = (diagram) => {
       NotificationToasterRef.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
     }
   })
-  const [duplicateMapMutation, { duplicateStatus, duplicateData, duplicateError }] = useMutation(createNewMap, {
+  const [shareMapMutation] = useMutation(updateMap, {
+    onSuccess: (resp, { selectedMap }) => {
+      queryCache.invalidateQueries("mindmaps")
+      NotificationToasterRef.current.show({ message: `Successfully shared ${selectedMap.name}`, intent: "success" })
+    },
+    onError: () => {
+      NotificationToasterRef.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
+    }
+  })
+  const [duplicateMapMutation] = useMutation(createNewMap, {
     onSuccess: (resp, { selectedMap }) => {
       queryCache.invalidateQueries("mindmaps")
       controller.run("setUndoStack", { undoStack: new Stack() })
@@ -41,7 +52,7 @@ const useCloud = (diagram) => {
       NotificationToasterRef.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
     }
   })
-  const [updateMapMutation, { updateStatus, updateData, updateError }] = useMutation(updateMap, {
+  const [updateMapMutation] = useMutation(updateMap, {
     onSuccess: () => {
       queryCache.invalidateQueries("mindmaps")
       NotificationToasterRef.current.show({ message: "Saved successfully.", intent: "success" })
@@ -51,7 +62,7 @@ const useCloud = (diagram) => {
       NotificationToasterRef.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
     }
   })
-  const [createMapMutation, { createStatus, createData, createError }] = useMutation(createNewMap, {
+  const [createMapMutation] = useMutation(createNewMap, {
     onSuccess: (resp, { name }) => {
       queryCache.invalidateQueries("mindmaps")
       NotificationToasterRef.current.show({ message: `Successfully created ${name}`, intent: "success" })
@@ -62,7 +73,21 @@ const useCloud = (diagram) => {
     }
   })
 
+  const [authenticateMutation] = useMutation(authenticate, {
+    onSuccess: (resp, { username }) => {
+      queryCache.invalidateQueries("mindmaps")
+      setUser({ token: resp.data.token, id: resp.data.user.id, username: resp.data.user.username })
+      NotificationToasterRef.current.show({ message: `Welcome, ${username}.`, intent: "success" })
+    }
+  })
 
+  const [createUserMutation] = useMutation(createUser, {
+    onSuccess: (resp, { username }) => {
+      queryCache.invalidateQueries("mindmaps")
+      setUser({ token: resp.data.token, id: resp.data.user.id, username: resp.data.user.username })
+      NotificationToasterRef.current.show({ message: `You've signed up, ${username}.`, intent: "success" })
+    }
+  })
 
   const handleDelete = (map) => {
     deleteMapMutation(map)
@@ -101,16 +126,30 @@ const useCloud = (diagram) => {
     updateMapMutation({ id: curMap, update: { mapData: mapData } })
   }
 
-  const handleCreate = (name) => {
+  const handleCreateMap = (name) => {
     const mapData = getMapAsJSON()
     createMapMutation({ name, mapData, owner: "benji" })
   }
 
-  const authenticate = (formData) => {
-    console.log(formData)
+  const handleAuthenticate = async (formData) => {
+    let success
+    let error
+    await authenticateMutation(formData, { onSuccess: () => success = true, onError: (e) => { success = false; error = e.response.data.err } })
+    return { success, error }
   }
 
-  return { authenticate, handleDelete, handleRename, handleLoad, handleDuplicate, handleSave, handleCreate, NotificationToasterRef }
+  const handleCreateUser = async (formData) => {
+    let success
+    let error
+    await createUserMutation(formData, { onSuccess: () => success = true, onError: (e) => { success = false; error = e.response.data.err } })
+    return { success, error }
+  }
+
+  const handleShare = async (users, selectedMap) => {
+    await shareMapMutation({ id: selectedMap._id, update: { users }, selectedMap })
+  }
+
+  return { handleShare, handleAuthenticate, handleDelete, handleRename, handleLoad, handleDuplicate, handleSave, handleCreateMap, NotificationToasterRef, handleCreateUser }
 }
 
 export { useCloud }

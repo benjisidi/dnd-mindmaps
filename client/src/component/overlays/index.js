@@ -1,4 +1,5 @@
-export * from "./create-user-dialog"
+export * from "./sign-up-dialog"
 export * from "./deletion-alert"
 export * from "./login-dialog"
 export * from "./rename-dialog"
+export * from "./share-dialog"

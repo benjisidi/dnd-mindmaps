@@ -1,4 +1,4 @@
-import { Button, MenuItem } from "@blueprintjs/core";
+import { Button, MenuItem, Text } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 import cx from "classnames";
 import React from "react";
@@ -18,6 +18,10 @@ export function ToolbarItemCloudLoad(props) {
           props.setSelectedMap(map)
           props.setDuplicateVisibility(true)
         }} icon="duplicate" text="Duplicate" />
+        <MenuItem key={`${map.name}-share`} onClick={() => {
+          props.setSelectedMap(map)
+          props.setShareVisibility(true)
+        }} text="Share" icon="send-message" />
         <MenuItem disabled={isSelected} key={`${map.name}-delete`} onClick={() => {
           props.setSelectedMap(map)
           props.setDeleteVisibility(true)

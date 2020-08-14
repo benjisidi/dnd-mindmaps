@@ -11,9 +11,13 @@ const User = require("../../models/User")
 // @desc Create user
 // @access Public
 router.post('/', async (req, res) => {
-  const { name, email, password } = req.body
+  const { username, password } = req.body
+  const existingUser = await User.findOne({ username })
+  if (existingUser) {
+    return res.status(400).json({ msg: "User already exists", err: "USERNAME_EXISTS" })
+  }
   const newUser = new User({
-    name, email, password
+    username, password
   })
 
   const salt = bcrypt.genSaltSync(10)
@@ -24,9 +28,8 @@ router.post('/', async (req, res) => {
   res.json({
     token,
     user: {
-      name: user.name,
       id: user.id,
-      email: user.email
+      username: user.username,
     }
   })
 })

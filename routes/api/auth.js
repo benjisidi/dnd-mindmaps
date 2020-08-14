@@ -11,20 +11,20 @@ const auth = require("../../middleware/auth")
 // @desc Authenticate user
 // @access Public
 router.post('/', async (req, res) => {
-  const { email, password } = req.body
-  if (!email || !password) {
-    return res.status(400).json({ msg: "Please enter all fields" })
+  const { username, password } = req.body
+  if (!username || !password) {
+    return res.status(400).json({ msg: "Please enter all fields", err: "MISSING_FIELDS" })
   }
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ username })
   if (!user) {
-    return res.status(404).json({ msg: "User not found" })
+    return res.status(404).json({ msg: "User not found", err: "INVALID_USERNAME" })
   }
 
   // Validate Password
   const match = bcrypt.compareSync(password, user.password)
 
   if (!match) {
-    return res.status(401).json({ msg: "Invalid credentials" })
+    return res.status(401).json({ msg: "Invalid credentials", err: "INVALID_PASSWORD" })
   }
 
   const token = await jwt.sign({ id: user.id }, process.env.dnd_mindmaps_jwt_secret, { expiresIn: 28800 })
@@ -32,9 +32,8 @@ router.post('/', async (req, res) => {
   res.json({
     token,
     user: {
-      name: user.name,
       id: user.id,
-      email: user.email
+      username: user.username
     }
   })
 })
