@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken")
 
 // User model
 const User = require("../../models/User")
-
+const auth = require("../../middleware/auth")
 
 // @route POST api/auth
 // @desc Authenticate user
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
   const match = bcrypt.compareSync(password, user.password)
 
   if (!match) {
-    return res.status(400).json({ msg: "Invalid credentials" })
+    return res.status(401).json({ msg: "Invalid credentials" })
   }
 
   const token = await jwt.sign({ id: user.id }, process.env.dnd_mindmaps_jwt_secret, { expiresIn: 28800 })
@@ -37,6 +37,14 @@ router.post('/', async (req, res) => {
       email: user.email
     }
   })
+})
+
+// @route POST api/auth
+// @desc Authenticate user
+// @access Private
+router.get("/user", auth, async (req, res) => {
+  const user = await User.findById(req.user.id).select('-password')
+  return res.json(user)
 })
 
 module.exports = router
