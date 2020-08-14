@@ -5,10 +5,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useGlobal } from "reactn";
-import { useMapCrud } from "../../utils";
+import { useCloud } from "../../utils";
 import { getAllMaps } from "../../utils/api";
-import { DeletionAlert } from "../overlays/deletion-alert";
-import { NameDialog } from "../overlays/rename-dialog";
+import { DeletionAlert, NameDialog, LoginDialog, CreateUserDialog } from "../overlays";
+
 import {
   ToolbarItemCloudLoad,
   ToolbarItemCloudSave,
@@ -29,11 +29,13 @@ export const Toolbar = (props) => {
   const [curMap] = useGlobal("curMap")
   const { register, handleSubmit, errors } = useForm();
   const [selectedMap, setSelectedMap] = useState()
+  const [loginVisibility, setLoginVisibility] = useState(false)
+  const [createUserVisibility, setCreateUserVisibility] = useState(false)
   const [renameVisibility, setRenameVisibility] = useState(false)
   const [deleteVisibility, setDeleteVisibility] = useState(false)
   const [duplicateVisibility, setDuplicateVisibility] = useState(false)
 
-  const { handleDelete, handleRename, handleLoad, handleDuplicate, handleSave, handleCreate, NotificationToasterRef } = useMapCrud(diagram)
+  const { handleDelete, handleRename, handleLoad, handleDuplicate, handleSave, handleCreate, NotificationToasterRef, authenticate } = useCloud(diagram)
 
   return (
     <div className="bm-toolbar">
@@ -76,6 +78,16 @@ export const Toolbar = (props) => {
           errors={errors}
           existing={existingMaps.status === "success" ? existingMaps.data.data.map(x => x.name) : []}
         />
+        <LoginDialog
+          register={register}
+          errors={errors}
+          isOpen={loginVisibility}
+          onClose={() => setLoginVisibility(false)}
+          onSubmit={handleSubmit((formData) => {
+            authenticate(formData)
+            setLoginVisibility(false)
+          })}
+        />
         <ToolbarItemOpen {...props} />
         <ToolbarItemExport {...props} />
         <ToolbarItemTheme {...props} />
@@ -113,7 +125,11 @@ export const Toolbar = (props) => {
         <span className="bm-toolbar-title">{curMap ? existingMaps.status === "success" && existingMaps.data?.data?.filter(x => x._id === curMap)[0]?.name : "Untitled Map"}</span>
       </div>
       <div className="bm-toolbar-right">
-        <ToolbarItemProfile />
+        <ToolbarItemProfile
+          handleCreateClick={() => setCreateUserVisibility(true)}
+          handleLoginClick={() => setLoginVisibility(true)}
+          handleProfileClick={null}
+        />
       </div>
     </div>
   );

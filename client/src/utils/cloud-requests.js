@@ -5,7 +5,7 @@ import { useRef } from "react"
 import { useGlobal } from "reactn"
 
 
-const useMapCrud = (diagram) => {
+const useCloud = (diagram) => {
   const NotificationToasterRef = useRef(null);
   const diagramProps = diagram.getDiagramProps();
   const { controller } = diagramProps;
@@ -106,7 +106,11 @@ const useMapCrud = (diagram) => {
     createMapMutation({ name, mapData, owner: "benji" })
   }
 
-  return { handleDelete, handleRename, handleLoad, handleDuplicate, handleSave, handleCreate, NotificationToasterRef }
+  const authenticate = (formData) => {
+    console.log(formData)
+  }
+
+  return { authenticate, handleDelete, handleRename, handleLoad, handleDuplicate, handleSave, handleCreate, NotificationToasterRef }
 }
 
-export { useMapCrud }
+export { useCloud }
