@@ -2,8 +2,7 @@ const express = require("express")
 const path = require("path")
 const mongoose = require("mongoose")
 
-const mindmaps = require("./routes/api/mindmaps")
-const users = require("./routes/api/users")
+
 require("dotenv").config()
 
 const main = async () => {
@@ -18,8 +17,9 @@ const main = async () => {
     console.log(e)
   }
 
-  app.use("/api/mindmaps", mindmaps)
-  app.use("/api/users", users)
+  app.use("/api/mindmaps", require("./routes/api/mindmaps"))
+  app.use("/api/users", require("./routes/api/users"))
+  app.use("/api/auth", require("./routes/api/auth"))
 
   if (process.env.NODE_ENV === "production") {
     app.use(express.static('client/build'))
