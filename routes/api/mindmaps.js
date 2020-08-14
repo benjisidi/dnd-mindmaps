@@ -3,13 +3,14 @@ const router = express.Router()
 const auth = require("../../middleware/auth")
 // Mindmap model
 const Mindmap = require("../../models/Mindmap")
-
+const User = require("../../models/User")
 
 // @route GET api/mindmaps
 // @desc List mindmaps
 // @access Private
-router.get('/', async (req, res) => {
-  mindmaps = await Mindmap.find().sort({ date: -1 })
+router.get('/', auth, async (req, res) => {
+  const user = await User.findById(req.user.id)
+  mindmaps = await Mindmap.find({ $or: [{ owner: user.username }, { users: user.username }] }).sort({ date: -1 })
   res.json(mindmaps)
 })
 

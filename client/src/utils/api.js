@@ -1,6 +1,12 @@
 import axios from "axios"
 
-export const getAllMaps = () => axios.get('/api/mindmaps')
+export const getAllMaps = (key, { user }) => {
+  return axios.get('/api/mindmaps', {
+    headers: {
+      "x-auth-token": user.token
+    }
+  })
+}
 
 export const updateMap = ({ id, update }) => axios.post(`/api/mindmaps/${id}`, update)
 

@@ -8,8 +8,12 @@ import { useGlobal } from "reactn"
 
 export function ToolbarItemProfile(props) {
   const [user, setUser] = useGlobal("user")
+  const [curMap, setCurMap] = useGlobal("curMap")
+
   const logOut = () => {
     setUser(null)
+    setCurMap(null)
+    props.resetMap()
     queryCache.invalidateQueries("mindmaps")
   }
   return !user ?

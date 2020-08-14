@@ -114,9 +114,9 @@ const useCloud = (diagram) => {
   }
 
   const getMapAsJSON = () => {
-    const currenntDiagramProps = diagram.getDiagramProps();
-    const { controller: currentController } = currenntDiagramProps;
-    const json = currentController.run("serializeModel", currenntDiagramProps);
+    const currentDiagramProps = diagram.getDiagramProps();
+    const { controller: currentController } = currentDiagramProps;
+    const json = currentController.run("serializeModel", currentDiagramProps);
     const jsonStr = JSON.stringify(json)
     return jsonStr
   };
@@ -128,7 +128,7 @@ const useCloud = (diagram) => {
 
   const handleCreateMap = (name) => {
     const mapData = getMapAsJSON()
-    createMapMutation({ name, mapData, owner: "benji" })
+    createMapMutation({ name, mapData, owner: user.username })
   }
 
   const handleAuthenticate = async (formData) => {

@@ -1,3 +1,4 @@
+import { Stack } from "immutable"
 import { iconClassName } from "@blink-mind/renderer-react";
 import { Toaster } from "@blueprintjs/core";
 import cx from "classnames";
@@ -25,8 +26,9 @@ import "./Toolbar.css";
 
 export const Toolbar = (props) => {
   const { onClickUndo, onClickRedo, canUndo, canRedo, diagram } = props;
-  const existingMaps = useQuery('mindmaps', getAllMaps)
   const [curMap] = useGlobal("curMap")
+  const [user] = useGlobal("user")
+  const existingMaps = useQuery(['mindmaps', { user }], getAllMaps)
   const { register, handleSubmit, errors } = useForm();
   const [selectedMap, setSelectedMap] = useState()
   const [loginVisibility, setLoginVisibility] = useState(false)
@@ -48,6 +50,13 @@ export const Toolbar = (props) => {
     handleShare,
     NotificationToasterRef,
   } = useCloud(diagram)
+
+  const diagramProps = diagram.getDiagramProps();
+  const { controller } = diagramProps;
+  const resetHistory = () => {
+    controller.run("setUndoStack", { undoStack: new Stack() })
+    controller.run("setRedoStack", { redoStack: new Stack() })
+  }
 
   return (
     <div className="bm-toolbar">
@@ -148,6 +157,8 @@ export const Toolbar = (props) => {
           handleCreateUserClick={() => setCreateUserVisibility(true)}
           handleLoginClick={() => setLoginVisibility(true)}
           handleProfileClick={null}
+          resetMap={props.initModel}
+          resetHistory={resetHistory}
         />
       </div>
     </div>

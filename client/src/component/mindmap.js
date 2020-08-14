@@ -72,8 +72,9 @@ export class Mindmap extends React.Component {
       diagram: this.diagram,
       onClickUndo: this.onClickUndo,
       onClickRedo: this.onClickRedo,
+      initModel: () => this.setState({ model: generateSimpleModel() }),
       canUndo,
-      canRedo
+      canRedo,
     };
     return <Toolbar {...toolbarProps} />;
   }
