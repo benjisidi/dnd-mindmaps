@@ -1,4 +1,4 @@
-import { Button, MenuItem, Text } from "@blueprintjs/core";
+import { Button, MenuItem, NonIdealState, Classes, Text, Icon } from "@blueprintjs/core";
 import { Select } from "@blueprintjs/select";
 import cx from "classnames";
 import React from "react";
@@ -31,13 +31,33 @@ export function ToolbarItemCloudLoad(props) {
       </MenuItem>
     )
   }
+
+  const NoMaps = () => {
+    // return <NonIdealState
+    //   title="¯\_(ツ)_/¯"
+    //   description={!user ? "Log in to view your mindmaps" : "Use Save As to create a mindmap"}
+    //   className={Classes.MENU_ITEM}
+    // />
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", margin: "4px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Icon iconSize={36} icon="layout" intent="danger" />
+        </div>
+        <h4 className={Classes.HEADING} style={{ marginBottom: "4px" }}>No Mindmaps Available</h4>
+        <Text>{!user ? <><b>Log in</b> to view your mindmaps</> : <>Use <b>Save As</b> to create a mindmap</>}</Text>
+      </div>
+    )
+  }
   return (
     <div className={cx("bm-toolbar-item")}>
       <Select
         itemRenderer={itemRenderer}
         items={props.existingMaps.status === "success" ? props.existingMaps.data.data : []}
         onItemSelect={props.handleLoad}
-        filterable={false} >
+        filterable={false}
+        noResults={<NoMaps />}
+      >
         <Button icon="cloud-download" minimal large />
       </Select>
     </div>
