@@ -27,7 +27,11 @@ export function ToolbarItemCloudLoad(props) {
   }
   return (
     <div className={cx("bm-toolbar-item")}>
-      <Select itemRenderer={itemRenderer} items={props.existingMaps.status === "success" ? props.existingMaps.data.data : []} onItemSelect={props.handleLoad} filterable={false} >
+      <Select
+        itemRenderer={itemRenderer}
+        items={props.existingMaps.status === "success" ? props.existingMaps.data.data : []}
+        onItemSelect={props.handleLoad}
+        filterable={false} >
         <Button icon="cloud-download" minimal large />
       </Select>
     </div>

@@ -6,4 +6,4 @@ export const updateMap = ({ id, update }) => axios.post(`/api/mindmaps/${id}`, u
 
 export const createNewMap = ({ owner, name, mapData }) => axios.post('/api/mindmaps', { owner, name, mapData })
 
-export const deleteMap = (id) => axios.delete(`/api/mindmaps/${id}`)
+export const deleteMap = ({ _id }) => axios.delete(`/api/mindmaps/${_id}`)

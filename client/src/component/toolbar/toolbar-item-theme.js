@@ -9,7 +9,7 @@ import { Popover } from "@blueprintjs/core";
 import React from "react";
 
 export function ToolbarItemTheme(props) {
-  const onClickSetTheme = themeKey => e => {
+  const onClickSetTheme = themeKey => () => {
     const { diagram } = props;
     const diagramProps = diagram.getDiagramProps();
     const { controller } = diagramProps;

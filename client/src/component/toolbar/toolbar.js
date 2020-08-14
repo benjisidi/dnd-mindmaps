@@ -1,12 +1,14 @@
 import { iconClassName } from "@blink-mind/renderer-react";
+import { Toaster } from "@blueprintjs/core";
 import cx from "classnames";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { queryCache, useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { useGlobal } from "reactn";
-import { createNewMap, getAllMaps, updateMap, deleteMap } from "../../api";
-import { NameDialog } from "../overlays/rename-dialog";
+import { useMapCrud } from "../../utils";
+import { getAllMaps } from "../../utils/api";
 import { DeletionAlert } from "../overlays/deletion-alert";
+import { NameDialog } from "../overlays/rename-dialog";
 import { ToolbarItemCloudLoad } from "./toolbar-item-cloud-load";
 import { ToolbarItemCloudSave } from "./toolbar-item-cloud-save";
 import { ToolbarItemExport } from "./toolbar-item-export";
@@ -15,99 +17,39 @@ import { ToolbarItemOpen } from "./toolbar-item-open";
 import { ToolbarItemSearch } from "./toolbar-item-search";
 import { ToolbarItemTheme } from "./toolbar-item-theme";
 import "./Toolbar.css";
-import { Stack } from "immutable";
-import { Toaster } from "@blueprintjs/core"
-
-import { deepCompareKeys } from "@blueprintjs/core/lib/esm/common/utils";
 // import debug from "debug";
 // const log = debug("app");
 
 export const Toolbar = (props) => {
   const { onClickUndo, onClickRedo, canUndo, canRedo, diagram } = props;
-  const diagramProps = diagram.getDiagramProps();
-  const { controller } = diagramProps;
   const existingMaps = useQuery('mindmaps', getAllMaps)
-  const [curMap, setCurMap] = useGlobal("curMap")
-  const { register, handleSubmit, watch, errors } = useForm();
+  const [curMap] = useGlobal("curMap")
+  const { register, handleSubmit, errors } = useForm();
   const [selectedMap, setSelectedMap] = useState()
   const [renameVisibility, setRenameVisibility] = useState(false)
   const [deleteVisibility, setDeleteVisibility] = useState(false)
   const [duplicateVisibility, setDuplicateVisibility] = useState(false)
 
-  const [deleteMapMutation, { deleteStatus, deleteData, deleteError }] = useMutation(deleteMap, {
-    onSuccess: () => {
-      queryCache.invalidateQueries("mindmaps")
-      NotificationToaster.current.show({ message: `Successfully deleted ${selectedMap.name}`, intent: "success" })
-    },
-    onError: () => {
-      NotificationToaster.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
-    }
-  })
-  const [renameMapMutation, { renameStatus, renameData, renameError }] = useMutation(updateMap, {
-    onSuccess: (resp) => {
-      queryCache.invalidateQueries("mindmaps")
-      NotificationToaster.current.show({ message: `Successfully renamed ${selectedMap.name} -> ${resp.data.name}`, intent: "success" })
-    },
-    onError: () => {
-      NotificationToaster.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
-    }
-  })
-  const [duplicateMapMutation, { duplicateStatus, duplicateData, duplicateError }] = useMutation(createNewMap, {
-    onSuccess: (resp) => {
-      queryCache.invalidateQueries("mindmaps")
-      controller.run("setUndoStack", { undoStack: new Stack() })
-      controller.run("setRedoStack", { redoStack: new Stack() })
-      console.log(resp)
-      NotificationToaster.current.show({ message: `Successfully duplicated ${selectedMap.name} -> ${resp.data.name}`, intent: "success" })
-    },
-    onError: () => {
-      NotificationToaster.current.show({ message: "Something went wrong. Please try again.", intent: "danger" })
-    }
-  })
-
-  const NotificationToaster = useRef(null);
-
-
-  const handleDelete = (map) => {
-    deleteMapMutation(map._id)
-    setDeleteVisibility(false)
-  }
-
-  const handleRename = (mapName) => {
-    console.log(`Renamed ${selectedMap.name} (${selectedMap._id}) to ${mapName}`)
-    renameMapMutation({ id: selectedMap._id, update: { name: mapName } })
-  }
-
-  const handleDuplicate = (mapName) => {
-    console.log(`Duplicated ${selectedMap.name} (${selectedMap._id}) to ${mapName}`)
-    duplicateMapMutation({ owner: "benji", name: mapName, mapData: selectedMap.mapData })
-  }
-
-
-  const handleLoad = (map) => {
-    let obj = JSON.parse(map.mapData);
-    let model = controller.run("deserializeModel", { controller, obj });
-    diagram.openNewModel(model);
-    setCurMap(map._id)
-    controller.run("setUndoStack", { undoStack: new Stack() })
-    controller.run("setRedoStack", { redoStack: new Stack() })
-  }
+  const { handleDelete, handleRename, handleLoad, handleDuplicate, handleSave, handleCreate, NotificationToasterRef } = useMapCrud(diagram)
 
   return (
     <div className="bm-toolbar">
-      <Toaster ref={NotificationToaster} />
+      <Toaster ref={NotificationToasterRef} />
       <DeletionAlert
         isOpen={deleteVisibility}
         targetName={selectedMap?.name}
         handleCancel={() => setDeleteVisibility(false)}
-        handleConfirm={() => handleDelete(selectedMap)}
+        handleConfirm={() => {
+          handleDelete(selectedMap)
+          setDeleteVisibility(false)
+        }}
       />
       <NameDialog
         title={`Rename ${selectedMap?.name}`}
         isOpen={renameVisibility}
         onClose={() => setRenameVisibility(false)}
         onSubmit={handleSubmit((formData) => {
-          handleRename(formData.renameMapName)
+          handleRename(formData.renameMapName, selectedMap)
           setRenameVisibility(false)
         })}
         defaultValue={selectedMap?.name}
@@ -122,7 +64,7 @@ export const Toolbar = (props) => {
         defaultValue={selectedMap?.name}
         onClose={() => setDuplicateVisibility(false)}
         onSubmit={handleSubmit((formData) => {
-          handleDuplicate(formData.duplicateMapName)
+          handleDuplicate(formData.duplicateMapName, selectedMap)
           setDuplicateVisibility(false)
         })}
         inputName={"duplicateMapName"}
@@ -148,7 +90,11 @@ export const Toolbar = (props) => {
         })}
         onClick={onClickRedo}
       />
-      <ToolbarItemCloudSave existingMaps={existingMaps} {...props} />
+      <ToolbarItemCloudSave
+        existingMaps={existingMaps}
+        handleSave={handleSave}
+        handleCreate={handleCreate}
+        {...props} />
       <ToolbarItemCloudLoad
         curMap={curMap}
         existingMaps={existingMaps}

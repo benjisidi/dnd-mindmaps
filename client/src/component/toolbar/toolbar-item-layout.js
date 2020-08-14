@@ -15,7 +15,7 @@ export function ToolbarItemLayout(props) {
     [DiagramLayoutType.RIGHT_TO_LEFT, "Only Left", "layout-left"]
   ];
 
-  const onClickSetLayout = layoutDir => e => {
+  const onClickSetLayout = layoutDir => () => {
     const { diagram } = props;
     const diagramProps = diagram.getDiagramProps();
     const { controller } = diagramProps;
@@ -41,4 +41,4 @@ export function ToolbarItemLayout(props) {
       </Popover>
     </div>
   );
-};
+}

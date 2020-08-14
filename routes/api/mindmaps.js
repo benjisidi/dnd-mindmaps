@@ -8,7 +8,7 @@ const Mindmap = require("../../models/Mindmap")
 // @route GET api/mindmaps
 // @desc List mindmaps
 // @access Private
-router.get('/', async (req, auth, res) => {
+router.get('/', async (req, res) => {
   mindmaps = await Mindmap.find().sort({ date: -1 })
   res.json(mindmaps)
 })
@@ -16,7 +16,7 @@ router.get('/', async (req, auth, res) => {
 // @route POST api/mindmaps
 // @desc Create a new mindmap
 // @access Private
-router.post('/', async (req, auth, res) => {
+router.post('/', async (req, res) => {
   let result
   try {
     const newMindmap = new Mindmap({
@@ -33,7 +33,7 @@ router.post('/', async (req, auth, res) => {
 // @route POST api/mindmaps/:id
 // @desc Update a mindmap
 // @access Private
-router.post('/:id', async (req, auth, res) => {
+router.post('/:id', async (req, res) => {
   let result
   try {
     const mindmap = await Mindmap.findById(req.params.id)
@@ -48,7 +48,7 @@ router.post('/:id', async (req, auth, res) => {
 // @route DELETE api/mindmaps/:id
 // @desc Delete a mindmap
 // @access Private
-router.delete('/:id', async (req, auth, res) => {
+router.delete('/:id', async (req, res) => {
   let mindmap
   try {
     mindmap = await Mindmap.findById(req.params.id)

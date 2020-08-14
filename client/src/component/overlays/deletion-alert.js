@@ -17,26 +17,6 @@ const DeletionAlert = (props) => {
         Are you sure you want to delete <b>{props.targetName}</b>? This action is irreversible.
       </p>
     </Alert>
-
-
-    // <Dialog
-    //   isOpen={props.isOpen}
-    //   onClose={props.onClose}
-    //   title={props.title}
-    //   canOutsideClickClose={false}
-    // >
-    //   <div className={Classes.DIALOG_BODY}>
-
-    //   </div>
-    //   <div className={Classes.DIALOG_FOOTER}>
-    //     <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-    //       <Button onClick={() => props.onClose()}>Close</Button>
-    //       <Button intent="danger" onClick={props.onConfirm}>
-    //         Confirm
-    //       </Button>
-    //     </div>
-    //   </div>
-    // </Dialog>
   )
 };
 export { DeletionAlert };
